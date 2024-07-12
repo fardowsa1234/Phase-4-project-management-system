@@ -62,7 +62,7 @@ function App() {
 function Home() {
   return (
     <div className="text-center">
-      <h1 className="display-4">Welcome to My App</h1>
+      <h1 className="display-4">Projec Management System</h1>
       <p className="lead">Manage your users, tasks, projects, and memberships all in one place.</p>
     </div>
   );
