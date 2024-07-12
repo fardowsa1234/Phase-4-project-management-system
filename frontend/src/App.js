@@ -37,7 +37,7 @@ function App() {
 
         <div className="container mt-4">
           <Routes>
-            <Route path="/" element={<Home />} />
+            
             <Route path="/users" element={<Users addUser={addUser} />} />
             <Route path="/add-user" element={<UserForm addUser={addUser} />} />
             <Route path="/user-detail/:id" element={<UserDetail />} />

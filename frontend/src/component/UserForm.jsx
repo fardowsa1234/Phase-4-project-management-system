@@ -15,49 +15,42 @@ const UserForm = ({ addUser }) => {
     password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
   });
 
-  const handleSubmit = (values, { setSubmitting }) => {
-    fetch('/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(values),
-    })
-      .then(response => response.json())
-      .then(data => {
-        addUser(data); // Assuming addUser is a function that adds the user to the state
-        setSubmitting(false);
-      })
-      .catch(error => {
-        console.error('Error adding user:', error);
-        setSubmitting(false);
-      });
+  const handleSubmit = (values, { setSubmitting, resetForm }) => {
+    // Simulate form submission
+    setTimeout(() => {
+      // Assuming addUser is a function that adds the user to the state
+      addUser(values);
+      resetForm();
+      setSubmitting(false);
+    }, 500); // Simulating a delay to mimic async behavior
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container">
       <h2 className="text-2xl font-bold mb-4">Create User</h2>
       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-        <Form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <div className="mb-4">
-            <label htmlFor="username" className="block text-gray-700 text-sm font-bold mb-2">Username</label>
-            <Field type="text" id="username" name="username" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-            <ErrorMessage name="username" component="div" className="text-red-500 text-xs italic" />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">Email</label>
-            <Field type="email" id="email" name="email" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-            <ErrorMessage name="email" component="div" className="text-red-500 text-xs italic" />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">Password</label>
-            <Field type="password" id="password" name="password" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-            <ErrorMessage name="password" component="div" className="text-red-500 text-xs italic" />
-          </div>
-          <div className="flex items-center justify-between">
-            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Submit</button>
-          </div>
-        </Form>
+        {({ isSubmitting }) => (
+          <Form className="bg-white shadow-sm rounded p-4">
+            <div className="mb-3">
+              <label htmlFor="username" className="form-label">Username</label>
+              <Field type="text" id="username" name="username" className="form-control" />
+              <ErrorMessage name="username" component="div" className="text-danger small" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label">Email</label>
+              <Field type="email" id="email" name="email" className="form-control" />
+              <ErrorMessage name="email" component="div" className="text-danger small" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="password" className="form-label">Password</label>
+              <Field type="password" id="password" name="password" className="form-control" />
+              <ErrorMessage name="password" component="div" className="text-danger small" />
+            </div>
+            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </button>
+          </Form>
+        )}
       </Formik>
     </div>
   );
