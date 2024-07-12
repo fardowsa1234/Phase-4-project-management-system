@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Chart from './Chart';
-import { fetchUsers, fetchProjects, fetchTasks, fetchProjectMembers } from './ProjectMembersList'; // Assume these functions fetch data
+import { fetchUsers, fetchProjects, fetchTasks, fetchRoles } from './ProjectMembersList'; // Assume these functions fetch data
 
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const [projectMembers, setProjectMembers] = useState([]);
+  const [roles, setRoles] = useState([]);
 
   useEffect(() => {
     // Fetch data for users, projects, tasks, project members
@@ -14,12 +14,12 @@ const Dashboard = () => {
       const usersData = await fetchUsers();
       const projectsData = await fetchProjects();
       const tasksData = await fetchTasks();
-      const membersData = await fetchProjectMembers();
+      const membersData = await fetchRoles();
 
       setUsers(usersData);
       setProjects(projectsData);
       setTasks(tasksData);
-      setProjectMembers(membersData);
+      setRoles(membersData);
     };
 
     fetchData();
@@ -59,7 +59,7 @@ const Dashboard = () => {
           <div className="card">
             <div className="card-body">
               <h5 className="card-title">Project Members</h5>
-              <Chart data={projectMembers} type="pie" />
+              <Chart data={roles} type="pie" />
             </div>
           </div>
         </div>
