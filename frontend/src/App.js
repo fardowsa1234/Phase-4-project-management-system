@@ -5,7 +5,7 @@ import UserDetail from './component/UserDetail';
 import UserForm from './component/UserForm';
 import ProjectList from './component/ProjectList';
 import ProjectMembersList from './component/ProjectMembersList';
-import Dashboard from './component/Dashboard';
+//import Dashboard from './component/Dashboard';
 import TaskList from './component/TaskList';
 import SignupForm from './component/Signup';
 import LoginForm from './component/Login';
@@ -46,14 +46,17 @@ function App() {
                   </Link>
                 </li>
                 <li className="nav-item">
+                  {/*
                   <Link to="/members" className="nav-link">
                     Project Members
                   </Link>
+                  */}
                 </li>
                 <li className="nav-item">
-                  <Link to="/dashboard" className="nav-link">
+                  {/*  <Link to="/dashboard" className="nav-link">
                     Dashboard
                   </Link>
+                  */}
                 </li>
                 <li className="nav-item">
                   <Link to="/signup" className="nav-link">
@@ -79,7 +82,7 @@ function App() {
             <Route path="/projects" element={<ProjectList />} />
             <Route path="/tasks" element={<TaskList />} />
             <Route path="/members" element={<ProjectMembersList />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            {/* <Route path="/dashboard" element={<Dashboard />} /> */}
             <Route path="/signup" element={<SignupForm />} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/user-detail/:id" element={<UserDetail />} />

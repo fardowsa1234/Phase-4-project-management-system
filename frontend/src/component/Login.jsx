@@ -12,7 +12,7 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/login', formData);
+      const response = await axios.post('http://localhost:5555/login', formData);
       setMessage(response.data.message);
       // Handle successful login (e.g., redirect, update state)
     } catch (error) {

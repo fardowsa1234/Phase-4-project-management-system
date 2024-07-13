@@ -10,7 +10,7 @@ function ProjectList() {
   }, []);
 
   const fetchProjects = () => {
-    fetch('/projects')
+    fetch('http://localhost:5555/projects')
       .then(response => response.json())
       .then(data => setProjects(data))
       .catch(error => console.error('Error fetching projects:', error));
@@ -27,7 +27,7 @@ function ProjectList() {
   };
 
   const createProject = (project) => {
-    fetch('/projects', {
+    fetch('http://localhost:5555/projects', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -43,7 +43,7 @@ function ProjectList() {
   };
 
   const updateProject = (id, project) => {
-    fetch(`/projects/${id}`, {
+    fetch(`http://localhost:5555/projects/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -60,7 +60,7 @@ function ProjectList() {
   };
 
   const deleteProject = (id) => {
-    fetch(`/projects/${id}`, {
+    fetch(`http://localhost:5555/projects/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

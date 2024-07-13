@@ -13,7 +13,7 @@ function ProjectMembersList() {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await fetch('/projects'); // Adjust URL to your backend API endpoint for roles
+        const response = await fetch('http://localhost:5555/projects'); // Adjust URL to your backend API endpoint for roles
         if (!response.ok) {
           throw new Error('Failed to fetch roles');
         }
@@ -26,7 +26,7 @@ function ProjectMembersList() {
 
     const fetchProjects = async () => {
       try {
-        const response = await fetch('/projects'); // Adjust URL to your backend API endpoint for projects
+        const response = await fetch('http://localhost:5555/projects'); // Adjust URL to your backend API endpoint for projects
         if (!response.ok) {
           throw new Error('Failed to fetch projects');
         }
@@ -39,7 +39,7 @@ function ProjectMembersList() {
 
     const fetchUsers = async () => {
       try {
-        const response = await fetch('/users'); // Adjust URL to your backend API endpoint for users
+        const response = await fetch('http://localhost:5555/users'); // Adjust URL to your backend API endpoint for users
         if (!response.ok) {
           throw new Error('Failed to fetch users');
         }
@@ -52,7 +52,7 @@ function ProjectMembersList() {
 
     const fetchTasks = async () => {
       try {
-        const response = await fetch('/tasks'); // Adjust URL to your backend API endpoint for tasks
+        const response = await fetch('http://localhost:5555/tasks'); // Adjust URL to your backend API endpoint for tasks
         if (!response.ok) {
           throw new Error('Failed to fetch tasks');
         }

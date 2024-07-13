@@ -17,7 +17,7 @@ const SignupForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/signup', formData);
+      const response = await axios.post('http://localhost:5555/signup', formData);
       alert('Signup successful!');
       console.log(response.data); // Handle response data as needed
       // Optionally reset form fields

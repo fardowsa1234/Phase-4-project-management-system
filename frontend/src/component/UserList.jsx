@@ -1,10 +1,11 @@
+
 import React, { useEffect, useState } from 'react';
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch('/users')
+    fetch('http://127.0.0.1:5555/users')
       .then((response) => response.json())
       .then((data) => setUsers(data))
       .catch((error) => console.error('Error fetching users:', error));
@@ -33,3 +34,4 @@ const UserList = () => {
 };
 
 export default UserList;
+

@@ -52,7 +52,7 @@ class Project(db.Model, SerializerMixin):
     start_date= db.Column(db.Date, nullable=False)
     end_date= db.Column(db.Date, nullable=False)
 
-    tasks= db.relationship('Task', backref='project', lazy=True)
+    tasks= db.relationship('Task', backref='project', lazy=True, cascade="all, delete-orphan")
 
     serialize_rules = ('-tasks',)
 
@@ -64,7 +64,7 @@ class Task(db.Model, SerializerMixin):
     name= db.Column(db.String, nullable=False)
     description= db.Column(db.String, nullable=False)
     due_date= db.Column(db.Date, nullable=False)
-    project_id= db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
+    project_id= db.Column(db.Integer, db.ForeignKey('projects.id', ondelete='CASCADE'))
 
     serialize_rules = ('-project',)
 
