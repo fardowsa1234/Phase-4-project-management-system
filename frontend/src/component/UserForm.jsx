@@ -1,8 +1,9 @@
+
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-const UserForm = ({ addUser }) => {
+const UserForm = () => {
   const initialValues = {
     username: '',
     email: '',
@@ -16,14 +17,32 @@ const UserForm = ({ addUser }) => {
   });
 
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    // Simulate form submission
-    setTimeout(() => {
-      // Assuming addUser is a function that adds the user to the state
-      addUser(values);
-      resetForm();
-      setSubmitting(false);
-    }, 500); // Simulating a delay to mimic async behavior
+    fetch('http://127.0.0.1:5555/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(values),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Success:', data);
+        resetForm();
+
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
   };
+
 
   return (
     <div className="container">

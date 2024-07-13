@@ -1,26 +1,19 @@
 import React from 'react';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
 
-function LogoutButton() {
-  const history = useHistory();
+const Logout = () => {
+    const handleLogout = async () => {
+        try {
+            const response = await axios.post('http://localhost:5555/logout');
+            console.log(response.data); // Handle success response, e.g., clear session
+        } catch (error) {
+            console.error('Logout Error:', error); // Handle error response
+        }
+    };
 
-  const handleLogout = async () => {
-    try {
-      const response = await axios.post('/logout');
-      alert(response.data.message);
-      // Handle successful logout (e.g., redirect to login page, update state)
-      history.push('/login');
-    } catch (error) {
-      alert('Error logging out');
-    }
-  };
+    return (
+        <button type="submit" className="btn btn-primary" onClick={handleLogout}>Logout</button>
+    );
+};
 
-  return (
-    <button className="btn btn-outline-danger" onClick={handleLogout}>
-      Logout
-    </button>
-  );
-}
-
-export default LogoutButton;
+export default Logout;

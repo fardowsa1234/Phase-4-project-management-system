@@ -11,14 +11,14 @@ function TaskList() {
   }, []);
 
   const fetchTasks = () => {
-    fetch('/tasks')
+    fetch('http://localhost:5555/tasks')
       .then(response => response.json())
       .then(data => setTasks(data))
       .catch(error => console.error('Error fetching tasks:', error));
   };
 
   const addTask = (task) => {
-    fetch('/tasks', {
+    fetch('http://localhost:5555/tasks', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ function TaskList() {
   };
 
   const updateTask = (task) => {
-    fetch(`/tasks/${task.id}`, {
+    fetch(`http://localhost:5555/tasks/${task.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -47,7 +47,7 @@ function TaskList() {
   };
 
   const deleteTask = (taskId) => {
-    fetch(`/tasks/${taskId}`, {
+    fetch(`http://localhost:5555/tasks/${taskId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

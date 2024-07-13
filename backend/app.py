@@ -57,6 +57,24 @@ class UserResource(Resource):
         users_dict = [user.to_dict() for user in User.query.all()]
         return make_response(users_dict, 200)
 
+    def post(self):
+        try:
+            data = request.get_json()
+            if not data:
+                return make_response(jsonify({"message": "No input data provided"}), 400)
+            
+            new_user = User(
+                username=data['username'],
+                email=data['email'],
+                bio=data.get('bio', '')
+            )
+            new_user.password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+            db.session.add(new_user)
+            db.session.commit()
+            return make_response(jsonify(new_user.to_dict()), 201)
+        except Exception as e:
+            return make_response(jsonify({"message": str(e)}), 400)
+
 class UserResourceById(Resource):
     #@authenticate
     def get(self, user_id):
@@ -82,6 +100,16 @@ class ProjectResource(Resource):
         db.session.commit()
         return make_response(new_project.to_dict(), 201)
 
+    
+    #@authenticate
+    
+    
+class ProjectResourceById(Resource):
+    #@authenticate
+    def get(self, project_id):
+        project = Project.query.get_or_404(project_id)
+        return make_response(project.to_dict(), 200)
+
     #@authenticate
     def put(self, project_id):
         data = request.get_json()
@@ -93,20 +121,13 @@ class ProjectResource(Resource):
         db.session.commit()
         return make_response(project.to_dict(), 200)
 
-    #@authenticate
     def delete(self, project_id):
-        project = Project.query.get_or_404(project_id)
+        project = Project.query.filter_by(id=project_id).first()
+        
         db.session.delete(project)
         db.session.commit()
         return make_response(jsonify({"message": "Project deleted"}), 200)
     
-class ProjectResourceById(Resource):
-    #@authenticate
-    def get(self, project_id):
-        project = Project.query.get_or_404(project_id)
-        return make_response(project.to_dict(), 200)
-    
-
 class TaskResource(Resource):
     #@authenticate
     def get(self):
@@ -130,6 +151,13 @@ class TaskResource(Resource):
         return make_response(new_task.to_dict(), 201)
 
     #@authenticate
+    
+class TaskResourceById(Resource):
+    #@authenticate
+    def get(self, task_id):
+        task = Task.query.filter(Task.id == task_id).first_or_404()
+        return make_response(task.to_dict(), 200)
+
     def put(self, task_id):
         data = request.get_json()
         task = Task.query.get_or_404(task_id)
@@ -147,12 +175,6 @@ class TaskResource(Resource):
         db.session.commit()
         return make_response(jsonify({"message": "Task deleted"}), 200)
     
-class TaskResourceById(Resource):
-    #@authenticate
-    def get(self, task_id):
-        task = Task.query.filter(Task.id == task_id).first_or_404()
-        return make_response(task.to_dict(), 200)
-
 api = Api(app)
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
