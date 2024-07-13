@@ -65,6 +65,11 @@ const UserForm = () => {
               <Field type="password" id="password" name="password" className="form-control" />
               <ErrorMessage name="password" component="div" className="text-danger small" />
             </div>
+            <div className="mb-3">
+              <label htmlFor="bio" className="form-label">Bio</label>
+              <Field type="text" id="bio" name="bio" className="form-control" />
+              <ErrorMessage name="bio" component="div" className="text-danger small" />
+            </div>
             <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
               {isSubmitting ? 'Submitting...' : 'Submit'}
             </button>

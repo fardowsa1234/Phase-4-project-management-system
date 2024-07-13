@@ -5,7 +5,7 @@ const Logout = () => {
     const handleLogout = async () => {
         try {
             const response = await axios.post('http://localhost:5555/logout');
-            console.log(response.data); // Handle success response, e.g., clear session
+            alert(response.data.message);
         } catch (error) {
             console.error('Logout Error:', error); // Handle error response
         }
