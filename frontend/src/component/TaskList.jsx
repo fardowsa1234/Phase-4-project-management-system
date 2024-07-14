@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field, ErrorMessage, useFormikContext } from 'formik';
 import * as Yup from 'yup';
 
 function TaskList() {
@@ -11,14 +11,14 @@ function TaskList() {
   }, []);
 
   const fetchTasks = () => {
-    fetch('/tasks')
+    fetch('http://localhost:5555/tasks')
       .then(response => response.json())
       .then(data => setTasks(data))
       .catch(error => console.error('Error fetching tasks:', error));
   };
 
   const addTask = (task) => {
-    fetch('/tasks', {
+    fetch('http://localhost:5555/tasks', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ function TaskList() {
   };
 
   const updateTask = (task) => {
-    fetch(`/tasks/${task.id}`, {
+    fetch(`http://localhost:5555/tasks/${task.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -47,7 +47,7 @@ function TaskList() {
   };
 
   const deleteTask = (taskId) => {
-    fetch(`/tasks/${taskId}`, {
+    fetch(`http://localhost:5555/tasks/${taskId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
@@ -59,6 +59,109 @@ function TaskList() {
 
   const handleEditClick = (task) => {
     setEditingTask(task);
+  };
+
+  const TaskForm = ({ onTaskAdded, onTaskUpdated, editingTask }) => {
+    const initialValues = { name: '', description: '', due_date: '', project_id: '' };
+
+    const validationSchema = Yup.object({
+      name: Yup.string().required('Required'),
+      description: Yup.string().required('Required'),
+      due_date: Yup.string().required('Required'),
+      project_id: Yup.string().required('Required')  // Use string if project_id is a string, otherwise number if it's a number
+    });
+
+    const FormObserver = () => {
+      const { setValues } = useFormikContext();
+
+      useEffect(() => {
+        if (editingTask) {
+          setValues(editingTask);
+        }
+      }, [setValues]);
+
+      return null;
+    };
+
+    const handleSubmit = (values, { setSubmitting, resetForm }) => {
+      if (editingTask) {
+        onTaskUpdated({ ...values, id: editingTask.id });
+      } else {
+        onTaskAdded(values);
+      }
+      resetForm();
+      setSubmitting(false);
+    };
+
+    return (
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        enableReinitialize
+      >
+        {({ isSubmitting }) => (
+          <Form className="bg-white shadow-sm rounded px-4 pt-4 pb-4 mb-4">
+            <FormObserver />
+            <div className="mb-3">
+              <label htmlFor="name" className="form-label text-gray-700">
+                Name
+              </label>
+              <Field
+                type="text"
+                name="name"
+                className="form-control"
+              />
+              <ErrorMessage name="name" component="div" className="text-danger small" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="description" className="form-label text-gray-700">
+                Description
+              </label>
+              <Field
+                as="textarea"
+                name="description"
+                className="form-control"
+                rows="3"
+              />
+              <ErrorMessage name="description" component="div" className="text-danger small" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="due_date" className="form-label text-gray-700">
+                Due Date
+              </label>
+              <Field
+                type="date"
+                name="due_date"
+                className="form-control"
+              />
+              <ErrorMessage name="due_date" component="div" className="text-danger small" />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="project_id" className="form-label text-gray-700">
+                Project ID
+              </label>
+              <Field
+                type="text"
+                name="project_id"
+                className="form-control"
+              />
+              <ErrorMessage name="project_id" component="div" className="text-danger small" />
+            </div>
+
+            <div className="d-flex justify-content-end">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="btn btn-primary"
+              >
+                {isSubmitting ? 'Submitting...' : editingTask ? 'Update Task' : 'Add Task'}
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    );
   };
 
   return (
@@ -81,89 +184,6 @@ function TaskList() {
       </ul>
       <TaskForm onTaskAdded={addTask} onTaskUpdated={updateTask} editingTask={editingTask} />
     </div>
-  );
-}
-
-function TaskForm({ onTaskAdded, onTaskUpdated, editingTask }) {
-  const initialValues = { name: '', description: '', due_date: '' };
-
-  const validationSchema = Yup.object({
-    name: Yup.string().required('Required'),
-    description: Yup.string().required('Required'),
-    due_date: Yup.string().required('Required')
-  });
-
-  useEffect(() => {
-    if (editingTask) {
-      Formik.setValues(editingTask);
-    }
-  }, [editingTask]);
-
-  const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    if (editingTask) {
-      onTaskUpdated({ ...values, id: editingTask.id });
-    } else {
-      onTaskAdded(values);
-    }
-    resetForm();
-    setSubmitting(false);
-  };
-
-  return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-      enableReinitialize
-    >
-      {({ isSubmitting, setValues }) => (
-        <Form className="bg-white shadow-sm rounded px-4 pt-4 pb-4 mb-4">
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label text-gray-700">
-              Name
-            </label>
-            <Field
-              type="text"
-              name="name"
-              className="form-control"
-            />
-            <ErrorMessage name="name" component="div" className="text-danger small" />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="description" className="form-label text-gray-700">
-              Description
-            </label>
-            <Field
-              as="textarea"
-              name="description"
-              className="form-control"
-              rows="3"
-            />
-            <ErrorMessage name="description" component="div" className="text-danger small" />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="due_date" className="form-label text-gray-700">
-              Due Date
-            </label>
-            <Field
-              type="date"
-              name="due_date"
-              className="form-control"
-            />
-            <ErrorMessage name="due_date" component="div" className="text-danger small" />
-          </div>
-          <div className="d-flex justify-content-end">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn btn-primary"
-            >
-              {isSubmitting ? 'Submitting...' : editingTask ? 'Update Task' : 'Add Task'}
-            </button>
-          </div>
-        </Form>
-      )}
-    </Formik>
   );
 }
 

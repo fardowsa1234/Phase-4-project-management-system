@@ -2,38 +2,75 @@ import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { motion, useTime, useTransform } from 'framer-motion'; // Ensure this import statement is correct
+import { motion, useTime, useTransform } from 'framer-motion';
 
 function ProjectMembersList() {
   const [roles, setRoles] = useState([]);
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
+  const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    // Fetch roles
-    fetch('/projects')
-      .then(response => response.json())
-      .then(data => setRoles(data))
-      .catch(error => console.error('Error fetching members:', error));
+    const fetchRoles = async () => {
+      try {
+        const response = await fetch('http://localhost:5555/projects'); // Adjust URL to your backend API endpoint for roles
+        if (!response.ok) {
+          throw new Error('Failed to fetch roles');
+        }
+        const data = await response.json();
+        setRoles(data);
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+      }
+    };
 
-    // Fetch projects
-    fetch('/projects')
-      .then(response => response.json())
-      .then(data => setProjects(data))
-      .catch(error => console.error('Error fetching projects:', error));
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch('http://localhost:5555/projects'); // Adjust URL to your backend API endpoint for projects
+        if (!response.ok) {
+          throw new Error('Failed to fetch projects');
+        }
+        const data = await response.json();
+        setProjects(data);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    };
 
-    // Fetch users
-    fetch('/users')
-      .then(response => response.json())
-      .then(data => setUsers(data))
-      .catch(error => console.error('Error fetching users:', error));
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('http://localhost:5555/users'); // Adjust URL to your backend API endpoint for users
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch('http://localhost:5555/tasks'); // Adjust URL to your backend API endpoint for tasks
+        if (!response.ok) {
+          throw new Error('Failed to fetch tasks');
+        }
+        const data = await response.json();
+        setTasks(data);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    fetchTasks();
+    fetchRoles();
+    fetchProjects();
+    fetchUsers();
   }, []);
 
   const refreshRoles = () => {
-    fetch('/projects')
-      .then(response => response.json())
-      .then(data => setRoles(data))
-      .catch(error => console.error('Error fetching members:', error));
+    setRoles(); // Function to refresh roles
   };
 
   const time = useTime();
@@ -45,14 +82,14 @@ function ProjectMembersList() {
       <div className="row">
         <div className="col-md-6">
           <ul className="list-group">
-            {roles.map(members => (
-              <li key={members.id} className="list-group-item">
+            {roles.map(member => (
+              <li key={member.id} className="list-group-item">
                 <div className="d-flex justify-content-between align-items-center">
                   <p className="text-sm font-medium text-indigo-600">
-                    {members.user} - {members.project}
+                    {member.user} - {member.project}
                   </p>
                   <div>
-                    <span className="badge bg-success">{members.role}</span>
+                    <span className="badge bg-success">{member.role}</span>
                   </div>
                 </div>
               </li>
@@ -66,12 +103,32 @@ function ProjectMembersList() {
               <ProjectMembershipForm
                 projects={projects}
                 users={users}
-                onMembershipAdded={refreshRoles}
+                onMembersAdded={refreshRoles}
               />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Display tasks here if needed */}
+      <div className="row mt-5">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-body">
+              <h3 className="text-xl font-semibold mb-4">Tasks</h3>
+              <ul className="list-group">
+                {tasks.map(task => (
+                  <li key={task.id} className="list-group-item">
+                    <p>{task.title}</p>
+                    {/* Add more task details if needed */}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="row mt-5">
         <div className="col-md-6 order-md-last">
           <motion.div className="example-container d-flex justify-content-center align-items-center" style={{ width: 200, height: 200 }}>
@@ -92,27 +149,28 @@ function ProjectMembershipForm({ projects, users, onMembersAdded }) {
     role: Yup.string().required('Required'),
   });
 
-  const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    fetch(`/projects/${values.project_id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        user_id: values.user_id,
-        role: values.role
-      })
-    })
-    .then(response => response.json())
-    .then(() => {
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    try {
+      const response = await fetch(`/projects/${values.project_id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: values.user_id,
+          role: values.role
+        })
+      });
+      if (!response.ok) {
+        throw new Error('Failed to add member');
+      }
       onMembersAdded();
       resetForm();
+    } catch (error) {
+      console.error('Error adding member:', error);
+    } finally {
       setSubmitting(false);
-    })
-    .catch(error => {
-      console.error('Error posting members:', error);
-      setSubmitting(false);
-    });
+    }
   };
 
   return (
